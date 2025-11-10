@@ -1,4 +1,5 @@
 name: Pdf-tools
+
 on:
   push:
     branches: [ main ]
@@ -10,35 +11,20 @@ permissions:
   id-token: write
 
 jobs:
-  build:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: npm
-
-      - run: npm ci
-      - run: npm run build
-
-      - name: Enable & Configure GitHub Pages
+      - name: Enable GitHub Pages
         uses: actions/configure-pages@v5
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
           enablement: true
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
+          path: .
 
-  deploy:
-    needs: build
-    runs-on: ubuntu-latest
-    steps:
       - name: Deploy to GitHub Pages
-        id: deployment
         uses: actions/deploy-pages@v4
