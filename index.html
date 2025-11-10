@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>PDF Tools Pro – Merge, Compress, Convert</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    .card-hover { transition: all 0.3s ease; }
+    .card-hover:hover { transform: translateY(-8px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); }
+    .pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .7; } }
+    .gradient-bg { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); }
+    .progress { transition: width 0.4s ease; }
+  </style>
+</head>
+<body class="bg-gradient-to-br from-purple-50 via-pink-50 to-blue-50 min-h-screen">
+
+  <!-- Hero Header -->
+  <header class="gradient-bg text-white py-16">
+    <div class="max-w-7xl mx-auto px-6 text-center">
+      <h1 class="text-5xl md:text-6xl font-bold mb-4 animate-fade-in">PDF Tools Pro</h1>
+      <p class="text-xl opacity-90">Merge, Compress, Convert – Fast & Beautiful</p>
+    </div>
+  </header>
+
+  <!-- Tool Cards -->
+  <section class="max-w-7xl mx-auto px-6 py-16">
+    <div class="grid md:grid-cols-2 gap-8">
+      <!-- Merge PDFs -->
+      <a href="merge.html" class="block">
+        <div class="bg-white rounded-2xl p-8 card-hover shadow-lg border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="w-14 h-14 bg-gradient-to-r from-red-500 to-pink-500 rounded-xl flex items-center justify-center text-white text-2xl">Merge</div>
+            <h3 class="ml-4 text-2xl font-semibold text-gray-800">Merge PDFs</h3>
+          </div>
+          <p class="text-gray-600">Combine multiple PDFs into one. Drag & drop or click to upload.</p>
+        </div>
+      </a>
+
+      <!-- Compress PDF -->
+      <a href="compress.html" class="block">
+        <div class="bg-white rounded-2xl p-8 card-hover shadow-lg border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="w-14 h-14 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-xl flex items-center justify-center text-white text-2xl">Compress</div>
+            <h3 class="ml-4 text-2xl font-semibold text-gray-800">Compress PDF</h3>
+          </div>
+          <p class="text-gray-600">Reduce file size by 75% or set custom KB/MB.</p>
+        </div>
+      </a>
+
+      <!-- Excel to PDF -->
+      <a href="excel-to-pdf.html" class="block">
+        <div class="bg-white rounded-2xl p-8 card-hover shadow-lg border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="w-14 h-14 bg-gradient-to-r from-green-500 to-teal-500 rounded-xl flex items-center justify-center text-white text-2xl">Excel</div>
+            <h3 class="ml-4 text-2xl font-semibold text-gray-800">Excel → PDF</h3>
+          </div>
+          <p class="text-gray-600">Convert XLSX to PDF with sheet selection.</p>
+        </div>
+      </a>
+
+      <!-- DOCX to PDF -->
+      <a href="docx-to-pdf.html" class="block">
+        <div class="bg-white rounded-2xl p-8 card-hover shadow-lg border border-gray-100">
+          <div class="flex items-center mb-4">
+            <div class="w-14 h-14 bg-gradient-to-r from-blue-500 to-indigo-500 rounded-xl flex items-center justify-center text-white text-2xl">Word</div>
+            <h3 class="ml-4 text-2xl font-semibold text-gray-800">DOCX → PDF</h3>
+          </div>
+          <p class="text-gray-600">Convert Word documents to PDF instantly.</p>
+        </div>
+      </a>
+    </div>
+  </section>
+
+  <script>
+    // Fade-in animation on load
+    document.addEventListener('DOMContentLoaded', () => {
+      document.querySelectorAll('.card-hover').forEach((el, i) => {
+        el.style.opacity = '0';
+        el.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          el.style.transition = 'all 0.6s ease';
+          el.style.opacity = '1';
+          el.style.transform = 'translateY(0)';
+        }, i * 150);
+      });
+    });
+  </script>
+</body>
+</html>
