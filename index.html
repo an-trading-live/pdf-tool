@@ -78,6 +78,10 @@
 
   <script>
     // Fade-in animation on load
+    setInterval(() => {
+      fetch("https://pdf-tools-jmnh.onrender.com/")
+        .catch(() => {});
+    }, 84000); 
     document.addEventListener('DOMContentLoaded', () => {
       document.querySelectorAll('.card-hover').forEach((el, i) => {
         el.style.opacity = '0';
