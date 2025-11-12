@@ -33,7 +33,7 @@
   <div class="max-w-3xl mx-auto" x-data="compressTool()">
     <div class="text-center mb-12 fade-in">
       <h1 class="text-4xl font-bold text-gray-900 mb-2">Compress PDF</h1>
-      <p class="text-lg text-gray-600">Reduce size to 75% or custom KB/MB with optimal quality.</p>
+      <p class="text-lg text-gray-600">Reduce size with any compression engine.</p>
     </div>
 
     <!-- File Upload -->
@@ -56,25 +56,40 @@
       </div>
     </div>
 
-    <!-- Compression Options -->
+    <!-- Compression Level -->
     <div class="mb-6">
       <label class="block text-sm font-medium text-gray-700 mb-2">Compression Level</label>
       <select x-model="compression" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
         <option value="75">75% (Recommended)</option>
-        <option value="50">50% (High Compression)</option>
-        <option value="25">25% (Max Compression)</option>
+        <option value="50">50% (High)</option>
+        <option value="25">25% (Max)</option>
         <option value="custom">Custom KB/MB</option>
       </select>
     </div>
 
+    <!-- Custom Size -->
     <div class="mb-6" x-show="compression === 'custom'">
-      <label class="block text-sm font-medium text-gray-700 mb-2">Target Size (e.g., 500kb or 2mb)</label>
-      <input type="text" x-model="customSize" placeholder="500kb" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500" />
+      <label class="block text-sm font-medium text-gray-700 mb-2">Target Size (e.g., 500KB or 2MB)</label>
+      <input type="text" x-model="customSize" placeholder="500KB" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500" />
+    </div>
+
+    <!-- Library Selection -->
+    <div class="mb-6">
+      <label class="block text-sm font-medium text-gray-700 mb-2">Compression Engine</label>
+      <select x-model="library" class="w-full rounded-xl border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500">
+        <option value="fitz">PyMuPDF (fitz) – Best quality/size control</option>
+        <option value="ghostscript">Ghostscript – Max compression</option>
+        <option value="pikepdf">pikepdf – Lossless, fast</option>
+        <option value="qpdf">qpdf – Linearize + compress</option>
+        <option value="pdfminer.six">pdfminer.six – Text-only (lossy)</option>
+        <option value="pdfrw">pdfrw – Re-save only</option>
+      </select>
     </div>
 
     <!-- Compress Button -->
     <button @click="upload" :disabled="uploading" class="w-full py-3 px-4 bg-yellow-600 text-white font-semibold rounded-xl shadow-md hover:bg-yellow-700 transition disabled:opacity-50">
-      Compress PDF
+      <span x-show="!uploading">Compress PDF</span>
+      <span x-show="uploading">Compressing...</span>
     </button>
 
     <!-- Progress -->
@@ -96,29 +111,55 @@
   <script>
     function compressTool() {
       return {
-        file: null, dragging: false, compression: '75', customSize: '',
-        uploading: false, progress: 0, downloadUrl: '',
+        file: null,
+        dragging: false,
+        compression: '75',
+        customSize: '',
+        library: 'fitz',  // default
+        uploading: false,
+        progress: 0,
+        downloadUrl: '',
 
         handleFile(e) { this.file = e.target.files[0]; },
         handleDrop(e) { this.dragging = false; this.file = e.dataTransfer.files[0]; },
 
         async upload() {
-          if (!this.file) return alert('Upload a PDF!');
-          this.uploading = true; this.progress = 0;
+          if (!this.file) return alert('Please upload a PDF!');
+          if (this.compression === 'custom' && !this.customSize.trim()) return alert('Enter target size (e.g., 500KB)');
+
+          this.uploading = true;
+          this.progress = 0;
+
           const formData = new FormData();
           formData.append('file_1', this.file);
-          formData.append('compression', this.compression === 'custom' ? this.customSize : this.compression + '%');
+          formData.append('library', this.library);
 
-          const interval = setInterval(() => this.progress = Math.min(this.progress + 10, 90), 200);
+          if (this.compression === 'custom') {
+            formData.append('target_size', this.customSize.trim());
+          } else {
+            formData.append('compression_percent', this.compression);
+          }
+
+          const interval = setInterval(() => this.progress = Math.min(this.progress + 12, 90), 180);
 
           try {
-            const res = await fetch('https://pdf-tools-jmnh.onrender.com/compress', { method: 'POST', body: formData });
-            clearInterval(interval); this.progress = 100;
-            if (!res.ok) throw new Error(await res.text());
+            const res = await fetch('https://pdf-tools-jmnh.onrender.com/compress', {
+              method: 'POST',
+              body: formData
+            });
+
+            clearInterval(interval);
+            this.progress = 100;
+
+            if (!res.ok) {
+              const err = await res.text();
+              throw new Error(err);
+            }
+
             const blob = await res.blob();
             this.downloadUrl = URL.createObjectURL(blob);
           } catch (e) {
-            alert('Error: ' + e.message);
+            alert('Compression failed: ' + e.message);
           } finally {
             this.uploading = false;
           }
